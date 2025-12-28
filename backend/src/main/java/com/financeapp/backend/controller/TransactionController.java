@@ -31,4 +31,9 @@ public class TransactionController {
     public ResponseEntity<List<Transaction>> list(@RequestParam String email) {
         return ResponseEntity.ok(service.listByEmail(email));
     }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> getDashboardData(@RequestParam String email) {
+        return ResponseEntity.ok(service.getDashboardResponse(email));
+    }
 }

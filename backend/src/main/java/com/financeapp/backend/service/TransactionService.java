@@ -1,11 +1,14 @@
 package com.financeapp.backend.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.financeapp.backend.dto.DashboardResponse;
 import com.financeapp.backend.dto.TransactionDTO;
 import com.financeapp.backend.model.Transaction;
+import com.financeapp.backend.model.TransactionType;
 import com.financeapp.backend.model.User;
 import com.financeapp.backend.repository.TransactionRepository;
 import com.financeapp.backend.repository.UserRepository;
@@ -43,5 +46,24 @@ public class TransactionService {
         return transactionRepository.findAllByUserEmail(email);
     }
 
+
+    // Adicionando para Calculcar Gastos
+    public DashboardResponse getDashboardResponse(String email){
+      List<Transaction> transactions = transactionRepository.findAllByUserEmail(email);
+
+      BigDecimal income = transactions.stream()
+          .filter(t -> t.getType() == TransactionType.INCOME)
+          .map(Transaction::getAmount)
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal expense = transactions.stream()
+          .filter(t -> t.getType() == TransactionType.EXPENSE)
+          .map(Transaction::getAmount)
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal balance = income.subtract(expense);
+
+      return new DashboardResponse(balance, income, expense);
+    }
 
 }

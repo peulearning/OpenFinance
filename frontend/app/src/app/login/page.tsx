@@ -1,9 +1,10 @@
 'use client';
 
-import { useRouter } from "next/router";
+// CORREÇÃO 1: Importar de next/navigation no App Router
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import api from '../../services/api';
 import Link from "next/link";
+import api from '../../services/api';
 
 export default function LoginPage(){
 
@@ -13,32 +14,29 @@ export default function LoginPage(){
   const [error, setError] = useState('');
 
   async function handleLogin(event: React.FormEvent) {
-
     event.preventDefault();
-    try{
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    setError(''); // Limpa erro anterior ao tentar de novo
 
-      const data = await response.json();
-      //Salvar o Token
+    try {
+      // CORREÇÃO 3: Usar api.post em vez de fetch
+      // Isso garante que bata em localhost:8080/api/auth/login
+      const response = await api.post('/auth/login', { email, password });
+
+      // Axios retorna os dados em .data
+      const data = response.data;
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('userEmail', email);
 
-      //Redirecionar para dashboard
-      router.push('/dashboard');
-    }catch(err){
+      // CORREÇÃO 4: Redirecionar para a raiz (/) onde está o dashboard
+      router.push('/');
+    } catch(err) {
       setError('Falha no login. Verifique suas credenciais.');
+      console.error(err);
     }
   }
 
-
   return (
-
    <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-100">
       <div className="bg-slate-800 p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center text-emerald-400">FinStack Login</h1>
@@ -77,5 +75,4 @@ export default function LoginPage(){
       </div>
     </div>
   );
-
 }

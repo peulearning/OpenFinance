@@ -28,7 +28,7 @@ export default function LoginPage() {
       localStorage.setItem("userEmail", email);
 
       // CORREÇÃO 4: Redirecionar para a raiz (/) onde está o dashboard
-      router.push("/");
+      router.push("/dashboard");
     } catch (err) {
       setError("Falha no login. Verifique suas credenciais.");
       console.error(err);

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "../src/services/api";
+// import api from "../src/services/api";
 import { LogOut, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 
 interface DashboardData {
@@ -30,32 +30,57 @@ export default function Dashboard() {
     router.push("/login");
   }, [router]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const email = localStorage.getItem("userEmail");
 
-    if (!token || !email) {
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+    if (!token) {
       router.push("/login");
       return;
-    } 
-
-    async function fetchData() {
-      try {
-        const dashRes = await api.get(`/transactions/dashboard?email=${email}`);
-        setDashboard(dashRes.data);
-
-        const listRes = await api.get(`/transactions?email=${email}`);
-        setTransactions(listRes.data);
-      } catch (error) {
-        console.error("Erro ao carregar dados", error);
-        logout();
-      } finally {
-        setLoading(false);
-      }
     }
 
-    fetchData();
-  }, [router, logout]);
+
+    // Dados temporários enquanto não existe API
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDashboard({
+      totalBalance: 5000,
+      totalIncome: 7500,
+      totalExpense: 2500,
+    });
+
+
+    setTransactions([
+      {
+        id: 1,
+        description: "Salário",
+        amount: 7500,
+        type: "INCOME",
+        date: "06/08/2026",
+      },
+      {
+        id: 2,
+        description: "Aluguel",
+        amount: 1500,
+        type: "EXPENSE",
+        date: "05/08/2026",
+      },
+      {
+        id: 3,
+        description: "Mercado",
+        amount: 1000,
+        type: "EXPENSE",
+        date: "04/08/2026",
+      },
+    ]);
+
+
+    setLoading(false);
+
+
+  }, [router]);
+
+
 
   const formatMoney = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {

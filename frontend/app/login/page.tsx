@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import api from "../src/services/api";
+// import api from "../src/services/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,27 +13,26 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   async function handleLogin(event: React.FormEvent) {
-    event.preventDefault();
-    setError(""); // Limpa erro anterior ao tentar de novo
+  event.preventDefault();
+  setError("");
 
-    try {
-      // CORREÇÃO 3: Usar api.post em vez de fetch
-      // Isso garante que bata em localhost:8080/api/auth/login
-      const response = await api.post("/auth/login", { email, password });
+  try {
+    // MOCK TEMPORÁRIO
+    const fakeUser = {
+      token: "fake-token",
+      email: email,
+    };
 
-      // Axios retorna os dados em .data
-      const data = response.data;
+    localStorage.setItem("token", fakeUser.token);
+    localStorage.setItem("userEmail", fakeUser.email);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userEmail", email);
+    router.push("/dashboard");
 
-      // CORREÇÃO 4: Redirecionar para a raiz (/) onde está o dashboard
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Falha no login. Verifique suas credenciais.");
-      console.error(err);
-    }
+  } catch (err) {
+    setError("Erro ao realizar login.");
+    console.error(err);
   }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-100">

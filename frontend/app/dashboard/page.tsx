@@ -30,34 +30,6 @@ export default function Dashboard() {
     router.push("/login");
   }, [router]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const email = localStorage.getItem("userEmail");
-
-    if (!token || !email) {
-      router.push("/login");
-      return;
-    }
-
-    async function fetchData() {
-      try {
-        const dashRes = await api.get(`/transactions/dashboard?email=${email}`);
-        setDashboard(dashRes.data);
-
-        const listRes = await api.get(`/transactions?email=${email}`);
-        setTransactions(listRes.data);
-      } catch (error) {
-        console.error("Erro ao carregar dados", error);
-        logout();
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-
-    }, [router, logout]);
-
 
   useEffect(() => {
   const token = localStorage.getItem("token");
@@ -70,6 +42,7 @@ export default function Dashboard() {
 
     // Dados temporários enquanto não existe API
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDashboard({
       totalBalance: 5000,
       totalIncome: 7500,
